@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // পেজ লোড হলে লোকাল স্টোরেজ থেকে টোকেন চেক করা
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -28,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     setToken(userToken);
     localStorage.setItem("token", userToken);
     localStorage.setItem("user", JSON.stringify(userData));
-    router.push("/"); // লগইন হলে হোম পেজে যাবে
+    router.push("/");
   };
 
   // লগআউট ফাংশন
@@ -45,4 +44,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}; 
