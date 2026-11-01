@@ -86,6 +86,8 @@ export default function JoinedEventsPage() {
             ))}
           </div>
         )}
+
+        
       </div>
     </div>
   );
