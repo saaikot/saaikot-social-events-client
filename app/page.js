@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2"; // ✅ SweetAlert ইম্পোর্ট করা হলো
 import { FiCalendar, FiMapPin, FiArrowRight, FiHeart, FiUsers, FiTarget, FiShield } from "react-icons/fi";
 
 export default function Home() {
@@ -12,10 +13,7 @@ export default function Home() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/recent?limit=6`);
-        
-    
         setEvents(response.data); 
       } catch (error) {
         console.error("Error fetching events", error);
@@ -25,6 +23,18 @@ export default function Home() {
     };
     fetchEvents();
   }, []);
+
+  // ✅ নিউজলেটার সাবস্ক্রাইব হ্যান্ডলার
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      icon: "success",
+      title: "Subscribed!",
+      text: "You have successfully subscribed to our newsletter.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-base-200 font-sans text-base-content transition-colors duration-300">
@@ -145,10 +155,18 @@ export default function Home() {
         <div className="bg-primary/10 border border-primary/20 rounded-3xl p-10 text-center">
           <h2 className="text-3xl font-serif font-bold text-primary mb-4">Subscribe to our Newsletter</h2>
           <p className="text-base-content/70 mb-6">Stay updated with our latest social events and charity programs.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-xl mx-auto">
-            <input type="email" placeholder="Enter your email address" className="input input-bordered w-full rounded-full bg-base-100 text-base-content" />
-            <button className="btn btn-primary rounded-full px-8">Subscribe</button>
-          </div>
+          
+          {/* ✅ form এবং onSubmit যুক্ত করা হলো */}
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 justify-center max-w-xl mx-auto">
+            <input 
+              type="email" 
+              placeholder="Enter your email address" 
+              required 
+              className="input input-bordered w-full rounded-full bg-base-100 text-base-content" 
+            />
+            <button type="submit" className="btn btn-primary rounded-full px-8">Subscribe</button>
+          </form>
+
         </div>
       </section>
 
