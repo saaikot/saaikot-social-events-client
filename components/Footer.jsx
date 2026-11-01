@@ -1,9 +1,16 @@
-"use client"; 
+"use client"; // ✅ এটি অবশ্যই থাকতে হবে
+
+import { useState, useEffect } from "react"; // ✅ useState এবং useEffect ইম্পোর্ট করুন
 import Link from "next/link";
 import { FaFacebook, FaTwitter, FaLinkedin, FaGithub, FaHeart } from "react-icons/fa";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(2024); // ডিফল্ট ভ্যালু
+
+  // ✅ useEffect এর ভেতরে Date সেট করুন
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="bg-base-200 text-base-content border-t border-base-300 pt-12 pb-6">
@@ -35,7 +42,7 @@ export default function Footer() {
           <h6 className="footer-title opacity-100 font-bold text-base mb-4">Contact Us</h6>
           <div className="flex flex-col gap-2 text-sm opacity-80">
             <p>Email: support@hopehub.com</p>
-            <p>Phone: +880 1234 567890</p>
+            <p>Phone: +880 1xxx xxx700</p>
             <p>Address: Dhaka, Bangladesh</p>
           </div>
         </div>
