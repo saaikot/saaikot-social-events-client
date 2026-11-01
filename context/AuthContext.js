@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // লগইন ফাংশন
   const login = (userData, userToken) => {
     setUser(userData);
     setToken(userToken);
@@ -30,7 +29,14 @@ export const AuthProvider = ({ children }) => {
     router.push("/");
   };
 
-  // লগআউট ফাংশন
+  // 👇 নতুন যোগ করা হলো
+  const updateUser = (newUserData, newToken) => {
+    setUser(newUserData);
+    setToken(newToken);
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("user", JSON.stringify(newUserData));
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -40,8 +46,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
-}; 
+};

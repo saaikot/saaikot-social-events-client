@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
-import { FiMenu, FiX, FiLogOut, FiPlusCircle, FiBriefcase, FiUser, FiPhone, FiMail } from "react-icons/fi";
+import { FiMenu, FiX, FiLogOut, FiPlusCircle, FiBriefcase, FiUser, FiPhone, FiMail, FiSettings } from "react-icons/fi";
 
 export default function Navbar() {
   const { user, logout, loading } = useContext(AuthContext);
@@ -12,7 +12,6 @@ export default function Navbar() {
   if (loading) return <div className="h-20 bg-base-100"></div>;
 
   return (
-    // 👇 Glassmorphism Effect যোগ করা হলো (bg-base-100/90 backdrop-blur-md)
     <div className="w-full shadow-sm sticky top-0 z-50 bg-base-100/90 backdrop-blur-md text-base-content transition-colors duration-300 border-b border-base-300">
       
       {/* 🌟 Top Bar 🌟 */}
@@ -32,7 +31,6 @@ export default function Navbar() {
           
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            {/* 👇 লোগোর কালার text-base-content করা হলো যাতে ডার্ক মোডে সাদা দেখায় */}
             <Link href="/" className="text-3xl font-serif font-bold text-base-content flex items-center gap-1">
               HopeHub<span className="text-secondary">.</span>
             </Link>
@@ -53,6 +51,10 @@ export default function Navbar() {
                 </label>
                 <ul tabIndex={0} className="mt-3 p-2 shadow-xl menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border border-base-300">
                   <li className="menu-title text-xs text-base-content/50">{user.name}</li>
+                  
+                  {/* 👇 My Profile লিঙ্ক যোগ করা হলো */}
+                  <li><Link href="/profile" className="hover:text-primary"><FiSettings /> My Profile</Link></li>
+                  
                   <li><Link href="/create-event" className="hover:text-primary"><FiPlusCircle /> Create Event</Link></li>
                   <li><Link href="/manage-events" className="hover:text-primary"><FiBriefcase /> Manage Events</Link></li>
                   <li><Link href="/joined-events" className="hover:text-primary"><FiUser /> Joined Events</Link></li>
@@ -83,6 +85,10 @@ export default function Navbar() {
           {user ? (
              <>
              <div className="divider border-base-300"></div>
+             
+             {/* 👇 মোবাইল মেনুতেও My Profile যোগ করা হলো */}
+             <Link href="/profile" className="block py-2 text-base-content/80 hover:text-primary">My Profile</Link>
+             
              <Link href="/create-event" className="block py-2 text-base-content/80 hover:text-primary">Create Event</Link>
              <Link href="/manage-events" className="block py-2 text-base-content/80 hover:text-primary">Manage Events</Link>
              <Link href="/joined-events" className="block py-2 text-base-content/80 hover:text-primary">Joined Events</Link>
