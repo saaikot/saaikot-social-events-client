@@ -20,7 +20,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // 👇 ১. কাস্টম পাসওয়ার্ড ভ্যালিডেশন
+    // ১. কাস্টম পাসওয়ার্ড ভ্যালিডেশন
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     if (!passwordRegex.test(password)) {
       Swal.fire({
@@ -32,7 +32,7 @@ export default function RegisterPage() {
       return;
     }
 
-    // 👇 ২. ইমেইল ভ্যালিডেশন
+    // ২. ইমেইল ভ্যালিডেশন
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       Swal.fire({

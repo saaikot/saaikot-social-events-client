@@ -3,7 +3,6 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Swal from "sweetalert2";
-// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { FiEdit, FiTrash2, FiCalendar, FiMapPin } from "react-icons/fi";
@@ -72,7 +71,7 @@ export default function ManageEventsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-base-200">
-        {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
+      
         <div className="max-w-6xl mx-auto mt-10 px-4">
            <div className="text-center text-gray-400 py-20">Loading your events...</div>
         </div>
@@ -82,7 +81,7 @@ export default function ManageEventsPage() {
 
   return (
     <div className="min-h-screen bg-base-200 pb-20">
-      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
+      
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="mb-8 border-b pb-4 border-base-300 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>

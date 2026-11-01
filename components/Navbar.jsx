@@ -52,7 +52,8 @@ export default function Navbar() {
                 <ul tabIndex={0} className="mt-3 p-2 shadow-xl menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border border-base-300">
                   <li className="menu-title text-xs text-base-content/50">{user.name}</li>
                   
-                  {/* 👇 My Profile লিঙ্ক যোগ করা হলো */}
+                  
+                  
                   <li><Link href="/profile" className="hover:text-primary"><FiSettings /> My Profile</Link></li>
                   
                   <li><Link href="/create-event" className="hover:text-primary"><FiPlusCircle /> Create Event</Link></li>
@@ -86,7 +87,7 @@ export default function Navbar() {
              <>
              <div className="divider border-base-300"></div>
              
-             {/* 👇 মোবাইল মেনুতেও My Profile যোগ করা হলো */}
+            
              <Link href="/profile" className="block py-2 text-base-content/80 hover:text-primary">My Profile</Link>
              
              <Link href="/create-event" className="block py-2 text-base-content/80 hover:text-primary">Create Event</Link>

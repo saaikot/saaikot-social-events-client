@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌟 HopeHub - Social Development Events Platform
 
-## Getting Started
+HopeHub is a community-driven full-stack event management platform where users can create, join, and track social service events in their local area. Whether it's a winter clothes distribution or a fundraising event, HopeHub connects passionate individuals with meaningful causes.
 
-First, run the development server:
+## 🚀 Live Links
+- **Live Site URL:** [https://hopehub-client.vercel.app](https://hopehub-client.vercel.app)
+- **Client Repository:** [https://github.com/saaikot/saaikot-social-events-client](https://github.com/saaikot/saaikot-social-events-client)
+- **Server Repository:** [https://github.com/saaikot/saaikot-social-events-server](https://github.com/saaikot/saikot-social-events-server)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Key Features
+- **Secure Authentication & Authorization:** JWT-based secure Login and Registration system with custom password validation (Minimum 6 chars, at least 1 uppercase and 1 lowercase).
+- **Event Management (CRUD):** Users can create social events, view details, and manage (update/delete) only their own created events. Past dates are strictly restricted during creation.
+- **Join Events Functionality:** Logged-in users can seamlessly join any upcoming event with a single click, and track their joined events in a dedicated private dashboard.
+- **Premium UI/UX & Themes:** Fully responsive design featuring a custom Light (Cream & Sage) / Dark (Pitch Black & Green) theme toggle. Includes smooth Framer Motion animations and a custom 404 page.
+- **Profile Management:** Users can view and update their profile information, including their display name and profile picture.
+- **Loading Skeletons:** Implemented proper loading skeleton states across the application (Home, Events page) for a better user experience.
+- **SweetAlert Notifications:** Replaced default browser alerts with beautiful SweetAlert2 popups for all success and error messages.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
+- **Frontend:** Next.js (App Router), React, Tailwind CSS, DaisyUI, Framer Motion, React Icons, Axios.
+- **Backend:** Node.js, Express.js, MongoDB, JSON Web Tokens (JWT), Bcrypt.js.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ⚙️ How to Run Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Clone the client repository:**
+   ```bash
+   git clone https://github.com/saaikot/saaikot-social-events-client.git

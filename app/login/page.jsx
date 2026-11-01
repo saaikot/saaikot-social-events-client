@@ -24,10 +24,10 @@ export default function LoginPage() {
         password,
       });
 
-      // সাকসেস হলে AuthContext-এ ডাটা পাঠানো
+      
       login(response.data.user, response.data.token);
 
-      // SweetAlert সাকসেস মেসেজ
+    
       Swal.fire({
         icon: "success",
         title: "Login Successful!",
@@ -36,9 +36,9 @@ export default function LoginPage() {
         showConfirmButton: false,
       });
 
-      router.push("/"); // হোম পেজে রিডাইরেক্ট
+      router.push("/"); 
     } catch (error) {
-      // এরর হলে SweetAlert দেখানো
+      
       Swal.fire({
         icon: "error",
         title: "Login Failed",

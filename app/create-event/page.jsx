@@ -3,7 +3,6 @@ import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
-// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { FiImage, FiMapPin, FiCalendar, FiType, FiFileText } from "react-icons/fi";
 
@@ -68,7 +67,7 @@ export default function CreateEventPage() {
 
   return (
     <div className="min-h-screen bg-base-200 pb-20">
-      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
+      
       <div className="max-w-3xl mx-auto mt-10 px-4">
         <div className="card bg-base-100 shadow-xl border border-base-300">
           <div className="card-body">

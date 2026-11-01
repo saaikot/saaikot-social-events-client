@@ -2,7 +2,6 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Link from "next/link";
-// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 
@@ -34,9 +33,9 @@ export default function JoinedEventsPage() {
   }
 
   return (
-    // ✅ <main> থেকে <div> করা হয়েছে
+    
     <div className="min-h-screen bg-base-200 pb-20">
-      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
+      
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="mb-8 border-b pb-4 border-base-300">
           <h1 className="text-3xl font-bold text-white mb-2">Joined Events</h1>

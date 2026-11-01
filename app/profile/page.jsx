@@ -3,7 +3,6 @@ import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { FiUser, FiImage, FiSave } from "react-icons/fi";
 
@@ -59,7 +58,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
-      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
+      
       <div className="max-w-2xl mx-auto mt-12 px-4">
         <div className="bg-base-100 rounded-3xl shadow-xl border border-base-300 overflow-hidden">
           

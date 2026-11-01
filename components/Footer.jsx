@@ -54,7 +54,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-base-300 text-center text-sm opacity-70">
-        © {currentYear} HopeHub. All rights reserved. Made with ❤️ for a better world.
+        © {currentYear} HopeHub. All rights reserved. Made for a better world.
       </div>
     </footer>
   );
