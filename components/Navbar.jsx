@@ -18,7 +18,7 @@ export default function Navbar() {
       <div className="bg-primary text-primary-content text-xs py-2 px-4 hidden md:block transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex gap-6">
-            <span className="flex items-center gap-2"><FiPhone /> +880 123 456 789</span>
+            <span className="flex items-center gap-2"><FiPhone /> +880 19xxxxx700</span>
             <span className="flex items-center gap-2"><FiMail /> info@hopehub.com</span>
           </div>
           <div><span>Together for a better tomorrow</span></div>
