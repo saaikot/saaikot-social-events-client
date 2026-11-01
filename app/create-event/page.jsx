@@ -65,6 +65,9 @@ export default function CreateEventPage() {
     return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
   }
 
+  
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="min-h-screen bg-base-200 pb-20">
       
@@ -130,6 +133,7 @@ export default function CreateEventPage() {
                     <input
                       type="date"
                       name="eventDate"
+                      min={today} 
                       className="input input-bordered w-full pl-10"
                       value={formData.eventDate}
                       onChange={handleChange}
