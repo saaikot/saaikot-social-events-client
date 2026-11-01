@@ -2,14 +2,24 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; 
 import { AuthContext } from "@/context/AuthContext";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 
 export default function JoinedEventsPage() {
   const { user, token, loading } = useContext(AuthContext);
+  const router = useRouter(); 
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+ 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login"); 
+    }
+  }, [user, loading, router]);
+
+ 
   useEffect(() => {
     const fetchJoinedEvents = async () => {
       try {
@@ -25,17 +35,24 @@ export default function JoinedEventsPage() {
       }
     };
     
-    if (user && token) fetchJoinedEvents();
-  }, [user, token]);
+    
+    if (user && token) {
+      fetchJoinedEvents();
+    } else if (!loading && !user) {
+      setIsLoading(false); 
+    }
+  }, [user, token, loading]);
 
   if (loading || isLoading) {
-    return <div className="min-h-screen bg-base-200 flex items-center justify-center"><span className="loading loading-spinner loading-lg text-primary"></span></div>;
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
   }
 
   return (
-    
     <div className="min-h-screen bg-base-200 pb-20">
-      
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="mb-8 border-b pb-4 border-base-300">
           <h1 className="text-3xl font-bold text-white mb-2">Joined Events</h1>

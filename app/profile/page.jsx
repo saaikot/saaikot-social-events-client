@@ -16,7 +16,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/login");
+      router.replace("/login");
     } else if (user) {
       setName(user.name || "");
       setPhotoURL(user.photoURL || "");

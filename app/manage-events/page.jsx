@@ -15,7 +15,7 @@ export default function ManageEventsPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/login");
+      router.replace("/login");
     }
   }, [user, loading, router]);
 
