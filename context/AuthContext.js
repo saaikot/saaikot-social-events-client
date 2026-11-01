@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }) => {
     router.push("/");
   };
 
-
   const updateUser = (newUserData, newToken) => {
     setUser(newUserData);
     setToken(newToken);
@@ -42,7 +41,8 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/login");
+    
+    
   };
 
   return (
