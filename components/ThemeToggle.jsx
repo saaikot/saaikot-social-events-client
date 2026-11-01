@@ -12,7 +12,7 @@ export default function ThemeToggle() {
   }, []);
 
   const toggleTheme = () => {
-    // 👇 deen (light) থেকে hope-dark (dark) এ যাওয়া
+    
     const newTheme = theme === "deen" ? "hope-dark" : "deen";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);

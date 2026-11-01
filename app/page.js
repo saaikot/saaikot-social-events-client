@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
 import { FiCalendar, FiMapPin, FiArrowRight, FiHeart } from "react-icons/fi";
 
 export default function Home() {
@@ -14,7 +13,7 @@ export default function Home() {
     const fetchEvents = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
-        setEvents(response.data.slice(0, 4)); // প্রথম ৪টা ইভেন্ট দেখাবো
+        setEvents(response.data.slice(0, 4)); 
       } catch (error) {
         console.error("Error fetching events", error);
       } finally {
@@ -25,8 +24,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-base-200 font-sans text-base-content transition-colors duration-300">
-      <Navbar />
+    <div className="min-h-screen bg-base-200 font-sans text-base-content transition-colors duration-300">
 
       {/* 🌟 HERO SECTION 🌟 */}
       <section className="relative bg-primary py-20 md:py-32 overflow-hidden rounded-b-[40px] md:rounded-b-[80px] transition-colors duration-300">
@@ -80,7 +78,7 @@ export default function Home() {
 
       {/* 🌟 STATS SECTION 🌟 */}
       <section className="relative -mt-10 z-20 max-w-5xl mx-auto px-4">
-        {/* 👇 bg-base-100 এবং border-base-300 ব্যবহার করা হলো */}
+        
         <div className="bg-base-100 text-base-content rounded-2xl shadow-xl py-8 px-6 flex flex-wrap justify-around items-center gap-6 border-b-4 border-secondary transition-colors duration-300">
           {[
             { label: "Customers Reviews", value: "3K+" },
@@ -89,7 +87,7 @@ export default function Home() {
           ].map((stat, idx) => (
             <div key={idx} className="text-center">
               <p className="text-4xl font-serif font-bold text-primary mb-1">{stat.value}</p>
-              {/* 👇 text-gray-500 এর বদলে text-base-content/70 */}
+             
               <p className="text-base-content/70 font-semibold text-sm">{stat.label}</p>
             </div>
           ))}
@@ -111,7 +109,7 @@ export default function Home() {
         {loading ? (
           <div className="space-y-6">
             {[1, 2].map((n) => (
-              // 👇 bg-base-100 দিলাম
+              
               <div key={n} className="bg-base-100 rounded-2xl h-48 animate-pulse shadow-sm border border-base-300"></div>
             ))}
           </div>
@@ -132,11 +130,10 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  // 👇 bg-base-100 এবং border-base-300
+                  
                   className="bg-base-100 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col md:flex-row group border border-base-300"
                 >
-                  {/* Date Box */}
-                  {/* 👇 bg-primary/5 থেকে bg-base-200 করা হলো */}
+                  
                   <div className="bg-base-200 md:w-40 flex flex-col items-center justify-center p-6 border-b md:border-b-0 md:border-r border-base-300 transition-colors duration-300">
                     <span className="text-4xl font-serif font-bold text-secondary">{day}</span>
                     <span className="text-primary font-bold uppercase tracking-widest">{month} {year}</span>
@@ -144,14 +141,14 @@ export default function Home() {
 
                   {/* Content */}
                   <div className="p-6 md:p-8 flex-1 flex flex-col justify-center">
-                    {/* 👇 text-gray-800 থেকে text-base-content */}
+                    
                     <h3 className="text-2xl font-serif font-bold text-base-content mb-2 group-hover:text-secondary transition-colors">
                       {event.title}
                     </h3>
-                    {/* 👇 text-gray-500 থেকে text-base-content/70 */}
+                   
                     <p className="text-base-content/70 mb-4 line-clamp-2">{event.description}</p>
                     
-                    {/* 👇 text-gray-600 থেকে text-base-content/80 */}
+                
                     <div className="flex flex-wrap gap-4 text-sm text-base-content/80 mb-6">
                       <span className="flex items-center gap-1"><FiMapPin className="text-secondary" /> {event.location}</span>
                       <span className="flex items-center gap-1"><FiCalendar className="text-secondary" /> {eventDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
@@ -191,6 +188,6 @@ export default function Home() {
             </div>
          </div>
       </section>
-    </main>
+    </div>
   );
 }
