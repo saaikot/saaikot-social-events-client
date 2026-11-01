@@ -25,15 +25,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-base-200 font-sans text-base-content transition-colors duration-300">
-
       {/* 🌟 HERO SECTION 🌟 */}
       <section className="relative bg-primary py-20 md:py-32 overflow-hidden rounded-b-[40px] md:rounded-b-[80px] transition-colors duration-300">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
-          
-          {/* Hero Text */}
           <div className="md:w-1/2 text-center md:text-left">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <span className="inline-block py-1 px-4 rounded-full bg-white/10 text-secondary text-sm font-semibold mb-4 border border-white/20">
@@ -57,7 +53,6 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Hero Image with Overlapping Effects */}
           <div className="md:w-1/2 relative mt-10 md:mt-0">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, rotate: 2 }} 
@@ -68,7 +63,6 @@ export default function Home() {
               <img src="/banner.jpg" alt="Volunteers" className="w-full h-[500px] object-cover" />
             </motion.div>
             
-            {/* Decorative Circles */}
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-secondary rounded-full flex items-center justify-center text-secondary-content z-20 shadow-xl">
                <FiHeart size={40} className="fill-current" />
             </div>
@@ -78,7 +72,6 @@ export default function Home() {
 
       {/* 🌟 STATS SECTION 🌟 */}
       <section className="relative -mt-10 z-20 max-w-5xl mx-auto px-4">
-        
         <div className="bg-base-100 text-base-content rounded-2xl shadow-xl py-8 px-6 flex flex-wrap justify-around items-center gap-6 border-b-4 border-secondary transition-colors duration-300">
           {[
             { label: "Customers Reviews", value: "3K+" },
@@ -87,7 +80,6 @@ export default function Home() {
           ].map((stat, idx) => (
             <div key={idx} className="text-center">
               <p className="text-4xl font-serif font-bold text-primary mb-1">{stat.value}</p>
-             
               <p className="text-base-content/70 font-semibold text-sm">{stat.label}</p>
             </div>
           ))}
@@ -109,7 +101,6 @@ export default function Home() {
         {loading ? (
           <div className="space-y-6">
             {[1, 2].map((n) => (
-              
               <div key={n} className="bg-base-100 rounded-2xl h-48 animate-pulse shadow-sm border border-base-300"></div>
             ))}
           </div>
@@ -130,25 +121,19 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  
                   className="bg-base-100 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col md:flex-row group border border-base-300"
                 >
-                  
                   <div className="bg-base-200 md:w-40 flex flex-col items-center justify-center p-6 border-b md:border-b-0 md:border-r border-base-300 transition-colors duration-300">
                     <span className="text-4xl font-serif font-bold text-secondary">{day}</span>
                     <span className="text-primary font-bold uppercase tracking-widest">{month} {year}</span>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6 md:p-8 flex-1 flex flex-col justify-center">
-                    
                     <h3 className="text-2xl font-serif font-bold text-base-content mb-2 group-hover:text-secondary transition-colors">
                       {event.title}
                     </h3>
-                   
                     <p className="text-base-content/70 mb-4 line-clamp-2">{event.description}</p>
                     
-                
                     <div className="flex flex-wrap gap-4 text-sm text-base-content/80 mb-6">
                       <span className="flex items-center gap-1"><FiMapPin className="text-secondary" /> {event.location}</span>
                       <span className="flex items-center gap-1"><FiCalendar className="text-secondary" /> {eventDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
@@ -159,7 +144,6 @@ export default function Home() {
                     </Link>
                   </div>
 
-                  {/* Image */}
                   <div className="md:w-72 h-48 md:h-auto overflow-hidden relative">
                     <img
                       src={event.imageUrl || "/placeholder.jpg"}

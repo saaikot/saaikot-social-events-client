@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Navbar from "@/components/Navbar";
+// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { FiImage, FiMapPin, FiCalendar, FiType, FiFileText } from "react-icons/fi";
 
@@ -21,7 +21,6 @@ export default function CreateEventPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // প্রোটেক্টেড রাউট: ইউজার লগইন না থাকলে লগইন পেজে পাঠিয়ে দেওয়া
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
@@ -51,7 +50,7 @@ export default function CreateEventPage() {
         showConfirmButton: false,
       });
 
-      router.push("/events"); // ইভেন্ট তৈরি হলে সব ইভেন্ট পেজে নিয়ে যাবে
+      router.push("/events");
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -68,8 +67,8 @@ export default function CreateEventPage() {
   }
 
   return (
-    <main className="min-h-screen bg-base-200 pb-20">
-      <Navbar />
+    <div className="min-h-screen bg-base-200 pb-20">
+      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
       <div className="max-w-3xl mx-auto mt-10 px-4">
         <div className="card bg-base-100 shadow-xl border border-base-300">
           <div className="card-body">
@@ -77,7 +76,6 @@ export default function CreateEventPage() {
             
             <form onSubmit={handleSubmit} className="space-y-5">
               
-              {/* Title */}
               <div className="form-control">
                 <label className="label"><span className="label-text font-medium">Event Title</span></label>
                 <div className="relative">
@@ -94,7 +92,6 @@ export default function CreateEventPage() {
                 </div>
               </div>
 
-              {/* Description */}
               <div className="form-control">
                 <label className="label"><span className="label-text font-medium">Description</span></label>
                 <div className="relative">
@@ -111,7 +108,6 @@ export default function CreateEventPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Event Type */}
                 <div className="form-control">
                   <label className="label"><span className="label-text font-medium">Event Type</span></label>
                   <select
@@ -128,7 +124,6 @@ export default function CreateEventPage() {
                   </select>
                 </div>
 
-                {/* Date */}
                 <div className="form-control">
                   <label className="label"><span className="label-text font-medium">Event Date</span></label>
                   <div className="relative">
@@ -146,7 +141,6 @@ export default function CreateEventPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Location */}
                 <div className="form-control">
                   <label className="label"><span className="label-text font-medium">Location</span></label>
                   <div className="relative">
@@ -163,7 +157,6 @@ export default function CreateEventPage() {
                   </div>
                 </div>
 
-                {/* Image URL */}
                 <div className="form-control">
                   <label className="label"><span className="label-text font-medium">Image URL (Optional)</span></label>
                   <div className="relative">
@@ -194,6 +187,6 @@ export default function CreateEventPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

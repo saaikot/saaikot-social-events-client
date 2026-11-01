@@ -3,10 +3,9 @@ import { Suspense, useEffect, useState, useContext } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Navbar from "@/components/Navbar";
+// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { FiCalendar, FiMapPin, FiUser, FiArrowLeft } from "react-icons/fi";
-
 
 function EventDetailsContent() {
   const { id } = useParams();
@@ -75,17 +74,17 @@ function EventDetailsContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-base-200 flex items-center justify-center">
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
         <span className="loading loading-spinner loading-lg text-primary"></span>
-      </main>
+      </div>
     );
   }
 
   const isAlreadyJoined = event.joinedUsers?.includes(user?.email);
 
   return (
-    <main className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
-      <Navbar />
+    <div className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
+      {/* ❌ ভেতরের ভুল টেক্সটটা মুছে ফেলা হয়েছে */}
       
       <div className="max-w-5xl mx-auto mt-10 px-4">
         <button onClick={() => router.back()} className="btn btn-ghost btn-sm mb-4 text-base-content/70">
@@ -126,7 +125,7 @@ function EventDetailsContent() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

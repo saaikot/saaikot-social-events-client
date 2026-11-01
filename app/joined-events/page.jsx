@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 
@@ -14,14 +14,10 @@ export default function JoinedEventsPage() {
   useEffect(() => {
     const fetchJoinedEvents = async () => {
       try {
-        // আমরা GetAll API কল করে ফিল্টার করব, অথবা সার্ভারে আলাদা API বানাতে পারি
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
-        
-        // শুধু সেই ইভেন্টগুলো ফিল্টার করা যেখানে ইউজারের ইমেইল joinedUsers-এ আছে
         const joined = response.data.filter(
           (event) => event.joinedUsers && event.joinedUsers.includes(user.email)
         );
-        
         setEvents(joined);
       } catch (error) {
         console.error("Error fetching joined events", error);
@@ -38,8 +34,9 @@ export default function JoinedEventsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-base-200 pb-20">
-      <Navbar />
+    // ✅ <main> থেকে <div> করা হয়েছে
+    <div className="min-h-screen bg-base-200 pb-20">
+      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="mb-8 border-b pb-4 border-base-300">
           <h1 className="text-3xl font-bold text-white mb-2">Joined Events</h1>
@@ -74,6 +71,6 @@ export default function JoinedEventsPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

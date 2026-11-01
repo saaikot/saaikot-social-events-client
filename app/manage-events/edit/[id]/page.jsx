@@ -81,7 +81,7 @@ function EditEventContent() {
 
   return (
     <main className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
-      <Navbar />
+      import Navbar from "@/components/Navbar";
       <div className="max-w-3xl mx-auto mt-10 px-4">
         <div className="bg-base-100 rounded-3xl shadow-xl border border-base-300 p-8">
           <h2 className="text-2xl font-serif font-bold text-base-content mb-6">Edit Event</h2>

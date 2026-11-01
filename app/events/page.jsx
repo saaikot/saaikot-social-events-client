@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+// ❌ Navbar এর ইম্পোর্ট মুছে ফেলা হয়েছে
 import { FiCalendar, FiMapPin, FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
 
@@ -37,9 +37,11 @@ export default function AllEventsPage() {
   }, [searchTerm, events]);
 
   return (
-    <main className="min-h-screen bg-base-200 font-sans transition-colors duration-300">
-      <Navbar />
+    // ✅ <main> ট্যাগকে <div> করা হয়েছে
+    <div className="min-h-screen bg-base-200 font-sans transition-colors duration-300">
       
+      {/* ❌ import Navbar from "@/components/Navbar"; এখান থেকে মুছে ফেলা হয়েছে */}
+
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Upcoming Events</h1>
@@ -76,7 +78,6 @@ export default function AllEventsPage() {
                 className="bg-base-100 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-base-300 flex flex-col"
               >
                 <figure className="h-48 overflow-hidden relative">
-                  {/* 👇 ইমেজ লোড না হলে প্লেসহোল্ডার দেখাবে */}
                   <img
                     src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop"}
                     alt={event.title}
@@ -112,6 +113,6 @@ export default function AllEventsPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

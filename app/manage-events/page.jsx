@@ -3,9 +3,9 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Swal from "sweetalert2";
-import Navbar from "@/components/Navbar";
+// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
 import { AuthContext } from "@/context/AuthContext";
-import { useRouter } from "next/navigation"; // 👈 রিডাইরেক্ট করার জন্য
+import { useRouter } from "next/navigation";
 import { FiEdit, FiTrash2, FiCalendar, FiMapPin } from "react-icons/fi";
 
 export default function ManageEventsPage() {
@@ -14,14 +14,12 @@ export default function ManageEventsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // 🛡️ ১. প্রোটেক্টেড রাউট: ইউজার লগইন না থাকলে লগইন পেজে পাঠিয়ে দিবে
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
     }
   }, [user, loading, router]);
 
-  // 🚀 ২. ডাটা লোড করা
   const fetchMyEvents = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/my-events`, {
@@ -39,7 +37,6 @@ export default function ManageEventsPage() {
     if (token) fetchMyEvents();
   }, [token]);
 
-  // 🗑️ ৩. ডিলিট ফাংশন
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -56,10 +53,7 @@ export default function ManageEventsPage() {
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        
-        // (functional state update)
         setEvents((prevEvents) => prevEvents.filter((event) => event._id !== id));
-        
         Swal.fire("Deleted!", "Your event has been deleted.", "success");
       } catch (error) {
         Swal.fire("Error", error.response?.data?.message || "Failed to delete", "error");
@@ -67,32 +61,29 @@ export default function ManageEventsPage() {
     }
   };
 
-  //  ৪. লোডিং এবং অথোরাইজেশন চেক
   if (loading || !user) {
     return (
-      <main className="min-h-screen bg-base-200 flex items-center justify-center">
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
         <span className="loading loading-spinner loading-lg text-primary"></span>
-      </main>
+      </div>
     );
   }
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-base-200">
-        <Navbar />
+      <div className="min-h-screen bg-base-200">
+        {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
         <div className="max-w-6xl mx-auto mt-10 px-4">
            <div className="text-center text-gray-400 py-20">Loading your events...</div>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-base-200 pb-20">
-      <Navbar />
+    <div className="min-h-screen bg-base-200 pb-20">
+      {/* ❌ import Navbar from "@/components/Navbar"; বাদ দেওয়া হয়েছে */}
       <div className="max-w-6xl mx-auto mt-10 px-4">
-        
-        {/* হেডার সেকশন */}
         <div className="mb-8 border-b pb-4 border-base-300 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Manage Your Events</h1>
@@ -103,7 +94,6 @@ export default function ManageEventsPage() {
           </Link>
         </div>
 
-        {/* ইভেন্ট টেবিল */}
         {events.length === 0 ? (
           <div className="text-center bg-base-100 p-10 rounded-xl border border-base-300">
             <p className="text-gray-400 text-lg mb-4">You have not created any events yet.</p>
@@ -155,6 +145,6 @@ export default function ManageEventsPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
