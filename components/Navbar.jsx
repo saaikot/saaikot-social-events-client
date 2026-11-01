@@ -2,81 +2,97 @@
 import Link from "next/link";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
-import { FiMenu, FiX, FiLogOut, FiPlusCircle, FiBriefcase, FiUser } from "react-icons/fi";
+import ThemeToggle from "./ThemeToggle";
+import { FiMenu, FiX, FiLogOut, FiPlusCircle, FiBriefcase, FiUser, FiPhone, FiMail } from "react-icons/fi";
 
 export default function Navbar() {
   const { user, logout, loading } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (loading) return <div className="h-16 bg-base-100"></div>; // লোডিং স্টেট
+  if (loading) return <div className="h-20 bg-base-100"></div>;
 
   return (
-    <nav className="bg-base-100 shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+    // 👇 Glassmorphism Effect যোগ করা হলো (bg-base-100/90 backdrop-blur-md)
+    <div className="w-full shadow-sm sticky top-0 z-50 bg-base-100/90 backdrop-blur-md text-base-content transition-colors duration-300 border-b border-base-300">
+      
+      {/* 🌟 Top Bar 🌟 */}
+      <div className="bg-primary text-primary-content text-xs py-2 px-4 hidden md:block transition-colors duration-300">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex gap-6">
+            <span className="flex items-center gap-2"><FiPhone /> +880 123 456 789</span>
+            <span className="flex items-center gap-2"><FiMail /> info@hopehub.com</span>
+          </div>
+          <div><span>Together for a better tomorrow</span></div>
+        </div>
+      </div>
+
+      {/* 🌟 Main Navbar 🌟 */}
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-20 items-center">
           
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              SocialEvents<span className="text-secondary">.</span>
+            {/* 👇 লোগোর কালার text-base-content করা হলো যাতে ডার্ক মোডে সাদা দেখায় */}
+            <Link href="/" className="text-3xl font-serif font-bold text-base-content flex items-center gap-1">
+              HopeHub<span className="text-secondary">.</span>
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8 items-center">
-            <Link href="/" className="text-gray-700 hover:text-primary transition">Home</Link>
-            <Link href="/events" className="text-gray-700 hover:text-primary transition">Upcoming Events</Link>
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="/" className="font-semibold text-base-content/80 hover:text-secondary transition">Home</Link>
+            <Link href="/events" className="font-semibold text-base-content/80 hover:text-secondary transition">Upcoming Events</Link>
+            <ThemeToggle /> 
 
             {user ? (
-              // 👇 ইউজার লগইন থাকলে ড্রপডাউন দেখাবে
               <div className="dropdown dropdown-end">
-                <label tabIndex={0} className="btn btn-ghost btn-circle avatar border border-primary">
+                <label tabIndex={0} className="btn btn-ghost btn-circle avatar border-2 border-primary hover:border-secondary transition-colors">
                   <div className="w-10 rounded-full">
                     <img src={user.photoURL || "https://i.ibb.co/5v9Z1g4/default-avatar.png"} alt="Profile" />
                   </div>
                 </label>
-                <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border">
-                  <li className="menu-title text-xs text-gray-500">{user.name}</li>
-                  <li><Link href="/create-event"><FiPlusCircle /> Create Event</Link></li>
-                  <li><Link href="/manage-events"><FiBriefcase /> Manage Events</Link></li>
-                  <li><Link href="/joined-events"><FiUser /> Joined Events</Link></li>
-                  <div className="divider my-0"></div>
-                  <li><button onClick={logout} className="text-error"><FiLogOut /> Logout</button></li>
+                <ul tabIndex={0} className="mt-3 p-2 shadow-xl menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border border-base-300">
+                  <li className="menu-title text-xs text-base-content/50">{user.name}</li>
+                  <li><Link href="/create-event" className="hover:text-primary"><FiPlusCircle /> Create Event</Link></li>
+                  <li><Link href="/manage-events" className="hover:text-primary"><FiBriefcase /> Manage Events</Link></li>
+                  <li><Link href="/joined-events" className="hover:text-primary"><FiUser /> Joined Events</Link></li>
+                  <div className="divider my-0 border-base-300"></div>
+                  <li><button onClick={logout} className="text-error hover:bg-error/10"><FiLogOut /> Logout</button></li>
                 </ul>
               </div>
             ) : (
-              // 👇 লগইন না থাকলে লগইন বাটন
-              <Link href="/login" className="btn btn-primary btn-sm px-6">Login</Link>
+              <Link href="/login" className="btn btn-primary rounded-full px-8 text-primary-content">Login</Link>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700">
-              {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          <div className="md:hidden flex items-center gap-4">
+            <ThemeToggle />
+            <button onClick={() => setIsOpen(!isOpen)} className="text-base-content hover:text-secondary transition">
+              {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
             </button>
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-base-100 border-t px-4 pt-2 pb-4 space-y-2">
-          <Link href="/" className="block py-2 text-gray-700">Home</Link>
-          <Link href="/events" className="block py-2 text-gray-700">Upcoming Events</Link>
+        <div className="md:hidden bg-base-100 border-t border-base-300 px-4 pt-2 pb-4 space-y-2 font-medium shadow-lg">
+          <Link href="/" className="block py-2 text-base-content/80 hover:text-secondary">Home</Link>
+          <Link href="/events" className="block py-2 text-base-content/80 hover:text-secondary">Upcoming Events</Link>
           {user ? (
-            <>
-              <div className="divider"></div>
-              <Link href="/create-event" className="block py-2 text-gray-700">Create Event</Link>
-              <Link href="/manage-events" className="block py-2 text-gray-700">Manage Events</Link>
-              <Link href="/joined-events" className="block py-2 text-gray-700">Joined Events</Link>
-              <button onClick={logout} className="block py-2 text-error">Logout</button>
-            </>
+             <>
+             <div className="divider border-base-300"></div>
+             <Link href="/create-event" className="block py-2 text-base-content/80 hover:text-primary">Create Event</Link>
+             <Link href="/manage-events" className="block py-2 text-base-content/80 hover:text-primary">Manage Events</Link>
+             <Link href="/joined-events" className="block py-2 text-base-content/80 hover:text-primary">Joined Events</Link>
+             <button onClick={logout} className="block py-2 text-error w-full text-left">Logout</button>
+           </>
           ) : (
-            <Link href="/login" className="btn btn-primary btn-sm w-full">Login</Link>
+            <Link href="/login" className="btn btn-primary btn-sm w-full mt-2 text-primary-content">Login</Link>
           )}
         </div>
       )}
-    </nav>
+    </div>
   );
 }

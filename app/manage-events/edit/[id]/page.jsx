@@ -1,0 +1,141 @@
+"use client";
+import { useState, useContext, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import axios from "axios";
+import Swal from "sweetalert2";
+import Navbar from "@/components/Navbar";
+import { AuthContext } from "@/context/AuthContext";
+
+export default function EditEventPage() {
+  const { id } = useParams();
+  const router = useRouter();
+  const { token, loading } = useContext(AuthContext);
+  
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    eventType: "Donation",
+    imageUrl: "",
+    location: "",
+    eventDate: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // আগের ডাটা লোড করা
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`);
+        const event = response.data;
+        
+        // ফরম্যাট ডেট 
+        const formattedDate = new Date(event.eventDate).toISOString().split('T')[0];
+        
+        setFormData({
+          title: event.title,
+          description: event.description,
+          eventType: event.eventType,
+          imageUrl: event.imageUrl || "",
+          location: event.location,
+          eventDate: formattedDate,
+        });
+      } catch (error) {
+        Swal.fire("Error", "Event not found", "error");
+        router.push("/manage-events");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (id) fetchEvent();
+  }, [id, router]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Updated!",
+        text: "Event updated successfully.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      router.push("/manage-events");
+    } catch (error) {
+      Swal.fire("Error", error.response?.data?.message || "Update failed", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading || isLoading) return <div className="min-h-screen bg-base-200"></div>;
+
+  return (
+    <main className="min-h-screen bg-base-200 pb-20">
+      <Navbar />
+      <div className="max-w-3xl mx-auto mt-10 px-4">
+        <div className="card bg-base-100 shadow-xl border border-base-300">
+          <div className="card-body">
+            <h2 className="text-2xl font-bold text-white mb-6">Edit Event</h2>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="form-control">
+                <label className="label"><span className="label-text">Event Title</span></label>
+                <input type="text" name="title" className="input input-bordered" value={formData.title} onChange={handleChange} required />
+              </div>
+
+              <div className="form-control">
+                <label className="label"><span className="label-text">Description</span></label>
+                <textarea name="description" className="textarea textarea-bordered h-24" value={formData.description} onChange={handleChange} required />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label"><span className="label-text">Event Type</span></label>
+                  <select name="eventType" className="select select-bordered" value={formData.eventType} onChange={handleChange}>
+                    <option value="Donation">Donation</option>
+                    <option value="Cleanup">Cleanup</option>
+                    <option value="Plantation">Plantation</option>
+                    <option value="Health">Health</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="form-control">
+                  <label className="label"><span className="label-text">Date</span></label>
+                  <input type="date" name="eventDate" className="input input-bordered" value={formData.eventDate} onChange={handleChange} required />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label"><span className="label-text">Location</span></label>
+                  <input type="text" name="location" className="input input-bordered" value={formData.location} onChange={handleChange} required />
+                </div>
+                <div className="form-control">
+                  <label className="label"><span className="label-text">Image URL</span></label>
+                  <input type="url" name="imageUrl" className="input input-bordered" value={formData.imageUrl} onChange={handleChange} />
+                </div>
+              </div>
+
+              <div className="form-control mt-6">
+                <button type="submit" className={`btn btn-primary w-full ${isSubmitting ? "loading" : ""}`} disabled={isSubmitting}>
+                  {isSubmitting ? "Updating..." : "Update Event"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

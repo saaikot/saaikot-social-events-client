@@ -1,12 +1,62 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: deen --default, hope-dark;
+}
 
-
+/* 🌟 Light Theme (আগেরটা ঠিক আছে) 🌟 */
 @plugin "daisyui/theme" {
-  name: "night";
+  name: "deen";
   default: true;
+  prefersdark: false;
+  color-scheme: light;
+  
+  --color-primary: #778873; 
+  --color-primary-content: #ffffff;
+  --color-secondary: #ffc107; 
+  --color-secondary-content: #000000;
+  --color-accent: #A1BC98; 
+  --color-accent-content: #000000;
+  --color-neutral: #212529;
+  --color-neutral-content: #ffffff;
+  --color-base-100: #FDF6ED; 
+  --color-base-200: #e8dfd3; 
+  --color-base-300: #DCCFC0; 
+  --color-base-content: #2c352f; 
+}
+
+/* 🌟 Dark Theme (তোমার দেওয়া প্যালেট) 🌟 */
+@plugin "daisyui/theme" {
+  name: "hope-dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+  
+  --color-primary: #1E5128; /* Deep Green (Hero, Navbar top) */
+  --color-primary-content: #D8E9A8; /* Light green text */
+  
+  --color-secondary: #4E9F3D; /* Bright Green (Buttons, Accents) */
+  --color-secondary-content: #191A19; /* Black text on bright green */
+  
+  --color-accent: #D8E9A8; /* Pale Green */
+  --color-accent-content: #191A19; 
+  
+  --color-neutral: #191A19;
+  --color-neutral-content: #D8E9A8;
+  
+  --color-base-100: #212421; /* Card/Navbar Background (slightly lighter black) */
+  --color-base-200: #191A19; /* Main Page Background (Black) */
+  --color-base-300: #2E322E; /* Borders */
+  --color-base-content: #D8E9A8; /* Main Text (Light Green) */
+}
+
+@theme inline {
+  --font-sans: var(--font-nunito), sans-serif;
+  --font-serif: var(--font-playfair), serif;
 }
 
 body {
-  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
