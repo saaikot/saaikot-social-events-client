@@ -12,10 +12,10 @@ export default function Home() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // ✅ আপডেট: সার্ভারের নতুন রাউট ব্যবহার করা হয়েছে (যেখানে .limit(6) আছে)
+        
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/recent?limit=6`);
         
-        // ✅ আর slice() লাগবে না, সরাসরি সার্ভারের ডাটা সেট করুন
+    
         setEvents(response.data); 
       } catch (error) {
         console.error("Error fetching events", error);
