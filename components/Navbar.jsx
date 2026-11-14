@@ -1,15 +1,31 @@
 "use client";
 import Link from "next/link";
-import { useContext, useState } from "react";
-import { AuthContext } from "@/context/AuthContext";
+import { useState } from "react";
+import { useSession, signOut } from "@/utils/auth-client"; // ✅ BetterAuth হুক
 import ThemeToggle from "./ThemeToggle";
+import { useRouter } from "next/navigation";
 import { FiMenu, FiX, FiLogOut, FiPlusCircle, FiBriefcase, FiUser, FiPhone, FiMail, FiSettings } from "react-icons/fi";
 
 export default function Navbar() {
-  const { user, logout, loading } = useContext(AuthContext);
+  const { data: session, isPending } = useSession(); // BetterAuth থেকে সেশন নিচ্ছি
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
-  if (loading) return <div className="h-20 bg-base-100"></div>;
+  // সেশন চেক করা হচ্ছে
+  const user = session?.user;
+
+  const handleLogout = async () => {
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login");
+          router.refresh();
+        },
+      },
+    });
+  };
+
+  if (isPending) return <div className="h-20 bg-base-100"></div>;
 
   return (
     <div className="w-full shadow-sm sticky top-0 z-50 bg-base-100/90 backdrop-blur-md text-base-content transition-colors duration-300 border-b border-base-300">
@@ -29,7 +45,6 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           
-          {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-3xl font-serif font-bold text-base-content flex items-center gap-1">
               HopeHub<span className="text-secondary">.</span>
@@ -44,23 +59,20 @@ export default function Navbar() {
 
             {user ? (
               <div className="dropdown dropdown-end">
-                <label tabIndex={0} className="btn btn-ghost btn-circle avatar border-2 border-primary hover:border-secondary transition-colors">
+                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar border-2 border-primary hover:border-secondary transition-colors">
                   <div className="w-10 rounded-full">
-                    <img src={user.photoURL || "https://i.ibb.co/5v9Z1g4/default-avatar.png"} alt="Profile" />
+                    {/* BetterAuth এ ইউজারের ছবি session.user.image তে থাকে */}
+                    <img src={user.image || "https://i.ibb.co/5v9Z1g4/default-avatar.png"} alt="Profile" />
                   </div>
-                </label>
+                </div>
                 <ul tabIndex={0} className="mt-3 p-2 shadow-xl menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border border-base-300">
                   <li className="menu-title text-xs text-base-content/50">{user.name}</li>
-                  
-                  
-                  
                   <li><Link href="/profile" className="hover:text-primary"><FiSettings /> My Profile</Link></li>
-                  
                   <li><Link href="/create-event" className="hover:text-primary"><FiPlusCircle /> Create Event</Link></li>
                   <li><Link href="/manage-events" className="hover:text-primary"><FiBriefcase /> Manage Events</Link></li>
                   <li><Link href="/joined-events" className="hover:text-primary"><FiUser /> Joined Events</Link></li>
                   <div className="divider my-0 border-base-300"></div>
-                  <li><button onClick={logout} className="text-error hover:bg-error/10"><FiLogOut /> Logout</button></li>
+                  <li><button onClick={handleLogout} className="text-error hover:bg-error/10"><FiLogOut /> Logout</button></li>
                 </ul>
               </div>
             ) : (
@@ -86,14 +98,11 @@ export default function Navbar() {
           {user ? (
              <>
              <div className="divider border-base-300"></div>
-             
-            
              <Link href="/profile" className="block py-2 text-base-content/80 hover:text-primary">My Profile</Link>
-             
              <Link href="/create-event" className="block py-2 text-base-content/80 hover:text-primary">Create Event</Link>
              <Link href="/manage-events" className="block py-2 text-base-content/80 hover:text-primary">Manage Events</Link>
              <Link href="/joined-events" className="block py-2 text-base-content/80 hover:text-primary">Joined Events</Link>
-             <button onClick={logout} className="block py-2 text-error w-full text-left">Logout</button>
+             <button onClick={handleLogout} className="block py-2 text-error w-full text-left">Logout</button>
            </>
           ) : (
             <Link href="/login" className="btn btn-primary btn-sm w-full mt-2 text-primary-content">Login</Link>

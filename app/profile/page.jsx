@@ -1,64 +1,58 @@
 "use client";
-import { useState, useContext, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "@/context/AuthContext";
+import { authClient } from "@/utils/auth-client";
 import { FiUser, FiImage, FiSave } from "react-icons/fi";
 
 export default function ProfilePage() {
-  const { user, token, updateUser, loading } = useContext(AuthContext);
+  const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
 
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const user = session?.user;
+
   useEffect(() => {
-    if (!loading && !user) {
+    // ইউজার না থাকলে এবং লোডিং শেষ হলে লগইনে পাঠাবে
+    if (!isPending && !user) {
       router.replace("/login");
     } else if (user) {
       setName(user.name || "");
-      setPhotoURL(user.photoURL || "");
+      setPhotoURL(user.image || "");
     }
-  }, [user, loading, router]);
+  }, [user, isPending, router]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
 
-    try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`,
-        { name, photoURL },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    // ✅ BetterAuth-এর updateUser ফাংশন
+    const { error } = await authClient.updateUser({
+      name: name,
+      image: photoURL || "https://i.ibb.co/5v9Z1g4/default-avatar.png",
+    });
 
-      updateUser(response.data.user, response.data.token);
-
+    if (error) {
+      Swal.fire({ icon: "error", title: "Update Failed", text: error.message });
+    } else {
       Swal.fire({
         icon: "success",
         title: "Profile Updated!",
-        text: "Your profile has been updated successfully.",
         timer: 2000,
         showConfirmButton: false,
       });
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Update Failed",
-        text: error.response?.data?.message || "Something went wrong!",
-      });
-    } finally {
-      setIsUpdating(false);
+      router.refresh();
     }
+    setIsUpdating(false);
   };
 
-  if (loading || !user) return <div className="min-h-screen bg-base-200"></div>;
+  if (isPending || !user) return <div className="min-h-screen bg-base-200"></div>;
 
   return (
     <div className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
-      
       <div className="max-w-2xl mx-auto mt-12 px-4">
         <div className="bg-base-100 rounded-3xl shadow-xl border border-base-300 overflow-hidden">
           
@@ -71,6 +65,7 @@ export default function ProfilePage() {
                   src={photoURL || "https://i.ibb.co/5v9Z1g4/default-avatar.png"}
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  onError={(e) => { e.target.src = "https://i.ibb.co/5v9Z1g4/default-avatar.png"; }}
                 />
               </div>
             </div>
@@ -81,7 +76,6 @@ export default function ProfilePage() {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-6">
-              
               <div className="form-control">
                 <label className="label"><span className="label-text font-semibold text-base-content">Full Name</span></label>
                 <div className="relative">
@@ -117,7 +111,6 @@ export default function ProfilePage() {
               >
                 {isUpdating ? "Saving..." : <><FiSave /> Save Changes</>}
               </button>
-
             </form>
           </div>
         </div>

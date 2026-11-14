@@ -4,5 +4,4 @@ export const authClient = createAuthClient({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
 });
 
-
 export const { signIn, signUp, signOut, useSession } = authClient;
