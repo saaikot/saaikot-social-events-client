@@ -9,23 +9,12 @@ import { FiImage, FiMapPin, FiCalendar, FiType, FiFileText } from "react-icons/f
 export default function CreateEventPage() {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
-
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    eventType: "Donation",
-    imageUrl: "",
-    location: "",
-    eventDate: "",
-  });
+  const [formData, setFormData] = useState({ title: "", description: "", eventType: "Donation", imageUrl: "", location: "", eventDate: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const user = session?.user;
 
   useEffect(() => {
-    if (!isPending && !user) {
-      router.replace("/login");
-    }
+    if (!isPending && !user) router.replace("/login");
   }, [user, isPending, router]);
 
   const handleChange = (e) => {
@@ -39,40 +28,20 @@ export default function CreateEventPage() {
     try {
       const { data: jwtData } = await authClient.token();
       
-      if (!jwtData || !jwtData.token) {
-        throw new Error("Token not found");
-      }
-
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/events`, formData, {
-        headers: {
-          Authorization: `Bearer ${jwtData.token}`,
-        },
+        headers: { Authorization: `Bearer ${jwtData.token}` },
       });
 
-      Swal.fire({
-        icon: "success",
-        title: "Event Created!",
-        text: "Your event has been created successfully.",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
+      Swal.fire({ icon: "success", title: "Event Created!", timer: 2000, showConfirmButton: false });
       router.push("/events");
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Failed to create event",
-        text: error.response?.data?.message || error.message || "Something went wrong!",
-      });
+      Swal.fire({ icon: "error", title: "Failed to create event", text: error.response?.data?.message || "Error" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isPending || !user) {
-    return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
-  }
-
+  if (isPending || !user) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   const today = new Date().toISOString().split("T")[0];
 
   return (

@@ -1,5 +1,5 @@
 import dns from "dns";
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+dns.setServers(["8.8.8.8", "1.1.1.1"]); // Fix MongoDB DNS issue
 
 import mongoose from "mongoose";
 import { betterAuth } from "better-auth";
@@ -24,29 +24,18 @@ const { db, client } = await getMongoDB();
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
-    collectionNames: {
-      user: "users",
-      session: "sessions",
-      account: "accounts",
-    },
+    collectionNames: { user: "users", session: "sessions", account: "accounts" },
   }),
-  emailAndPassword: {
-    enabled: true, 
-  },
+  emailAndPassword: { enabled: true },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
   },
-  session: {
-    expiresIn: 60 * 60 * 24 * 7, 
-  },
+  session: { expiresIn: 60 * 60 * 24 * 7 },
   baseURL: process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
-  trustedOrigins: ["http://localhost:3001"],
-  plugins: [
-    jwt(),
-    nextCookies()
-  ],
+  trustedOrigins: ["http://localhost:3001", "https://saaikot-social-events-client.vercel.app"],
+  plugins: [jwt(), nextCookies()],
 });

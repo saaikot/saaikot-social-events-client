@@ -1,44 +1,34 @@
 "use client";
-import { Suspense, useEffect, useState, useContext } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
-// ❌ Navbar ইম্পোর্ট বাদ দেওয়া হয়েছে
-import { AuthContext } from "@/context/AuthContext";
+import { authClient } from "@/utils/auth-client";
 import { FiCalendar, FiMapPin, FiUser, FiArrowLeft } from "react-icons/fi";
 
 function EventDetailsContent() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, token } = useContext(AuthContext);
-  
+  const { data: session, isPending } = authClient.useSession();
   const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
+  
+  const user = session?.user;
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`);
-        setEvent(response.data);
-      } catch (error) {
-        Swal.fire("Error", "Event not found!", "error");
-        router.push("/events");
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) fetchEvent();
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`)
+      .then(res => setEvent(res.data))
+      .catch(() => router.push("/events"));
   }, [id, router]);
 
-  const handleJoinEvent = async () => {
+  const handleJoin = async () => {
     if (!user) {
       Swal.fire({
-        icon: "info",
-        title: "Login Required",
+        icon: "info", 
+        title: "Login Required", 
         text: "You need to login first to join this event.",
-        showCancelButton: true,
-        confirmButtonText: "Login",
+        showCancelButton: true, 
+        confirmButtonText: "Login", 
         cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) router.push("/login");
@@ -48,59 +38,43 @@ function EventDetailsContent() {
 
     setIsJoining(true);
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}/join`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: "Joined Successfully!",
-        timer: 2000,
-        showConfirmButton: false,
+      const { data: jwtData } = await authClient.token();
+      
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}/join`, {}, {
+        headers: { Authorization: `Bearer ${jwtData.token}` }
       });
       
+      Swal.fire({ icon: "success", title: "Joined Successfully!", timer: 2000, showConfirmButton: false });
+      
+      // UI আপডেট করা হচ্ছে
       setEvent((prev) => ({
         ...prev,
-        joinedUsers: [...(prev.joinedUsers || []), user.email],
+        joinedUsers: [...(prev.joinedUsers || []), user.email]
       }));
+      
     } catch (error) {
-      Swal.fire("Error", error.response?.data?.message || "Failed to join", "error");
+      // ✅ সার্ভার থেকে আসা এরর মেসেজ সুন্দরভাবে দেখানো হচ্ছে
+      const errorMessage = error.response?.data?.message || "Failed to join";
+      Swal.fire({ icon: "error", title: "Oops!", text: errorMessage });
     } finally {
       setIsJoining(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
+  if (isPending || !event) {
+    return <div className="min-h-screen flex items-center justify-center text-primary">Loading...</div>;
   }
 
+  // চেক করা হচ্ছে ইউজার অলরেডি জয়েন করেছে কি না
   const isAlreadyJoined = event.joinedUsers?.includes(user?.email);
 
   return (
-    <div className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
-      {/* ❌ ভেতরের ভুল টেক্সটটা মুছে ফেলা হয়েছে */}
-      
+    <div className="min-h-screen bg-base-200 pb-20 font-sans">
       <div className="max-w-5xl mx-auto mt-10 px-4">
-        <button onClick={() => router.back()} className="btn btn-ghost btn-sm mb-4 text-base-content/70">
-          <FiArrowLeft /> Back
-        </button>
-
+        <button onClick={() => router.back()} className="btn btn-ghost btn-sm mb-4 text-base-content/70"><FiArrowLeft /> Back</button>
         <div className="bg-base-100 rounded-3xl shadow-xl border border-base-300 overflow-hidden flex flex-col md:flex-row">
           <figure className="md:w-1/2 h-64 md:h-auto">
-            <img
-              src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop"}
-              alt={event.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.src = "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop";
-              }}
-            />
+            <img src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715"} alt={event.title} className="w-full h-full object-cover" />
           </figure>
           <div className="p-8 md:w-1/2 flex flex-col">
             <div className="badge bg-secondary text-secondary-content mb-4 font-bold border-none">{event.eventType}</div>
@@ -114,9 +88,9 @@ function EventDetailsContent() {
             </div>
 
             <div className="mt-auto">
-              <button
-                onClick={handleJoinEvent}
-                disabled={isJoining || isAlreadyJoined}
+              <button 
+                onClick={handleJoin} 
+                disabled={isJoining || isAlreadyJoined} 
                 className={`btn w-full rounded-xl ${isAlreadyJoined ? "btn-success text-white" : "btn-primary text-primary-content"} ${isJoining ? "loading" : ""}`}
               >
                 {isJoining ? "Joining..." : isAlreadyJoined ? "Already Joined" : "Join Event"}
@@ -129,13 +103,9 @@ function EventDetailsContent() {
   );
 }
 
-export default function EventDetailsPage() {
+export default function EventDetails() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    }>
+    <Suspense fallback={<div className="min-h-screen bg-base-200 flex items-center justify-center"><span className="loading loading-spinner loading-lg text-primary"></span></div>}>
       <EventDetailsContent />
     </Suspense>
   );

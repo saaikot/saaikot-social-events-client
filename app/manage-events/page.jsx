@@ -7,41 +7,38 @@ import { authClient } from "@/utils/auth-client";
 import { useRouter } from "next/navigation";
 import { FiEdit, FiTrash2, FiCalendar, FiMapPin } from "react-icons/fi";
 
-export default function ManageEventsPage() {
+export default function ManageEvents() {
   const { data: session, isPending } = authClient.useSession();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
   const user = session?.user;
 
   useEffect(() => {
-    if (!isPending && !user) {
-      router.replace("/login");
-    }
+    if (!isPending && !user) router.replace("/login");
   }, [user, isPending, router]);
 
-  const fetchMyEvents = async () => {
-    try {
-      const { data: jwtData } = await authClient.token();
-      if (!jwtData?.token) return;
-
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/my-events`, {
-        headers: { Authorization: `Bearer ${jwtData.token}` },
-      });
-      setEvents(response.data);
-    } catch (error) {
-      console.error("Error fetching my events", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (user) fetchMyEvents();
+    if (user) {
+      const fetchMyEvents = async () => {
+        try {
+          const { data: jwtData } = await authClient.token();
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/my-events`, {
+            headers: { Authorization: `Bearer ${jwtData.token}` }
+          });
+          setEvents(res.data);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchMyEvents();
+    }
   }, [user]);
 
   const handleDelete = async (id) => {
+    // ✅ Default confirm এর বদলে SweetAlert
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -49,40 +46,24 @@ export default function ManageEventsPage() {
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Yes, delete it!"
     });
 
     if (result.isConfirmed) {
       try {
         const { data: jwtData } = await authClient.token();
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${jwtData.token}` },
+          headers: { Authorization: `Bearer ${jwtData.token}` }
         });
-        setEvents((prevEvents) => prevEvents.filter((event) => event._id !== id));
+        setEvents(events.filter(e => e._id !== id));
         Swal.fire("Deleted!", "Your event has been deleted.", "success");
-      } catch (error) {
-        Swal.fire("Error", error.response?.data?.message || "Failed to delete", "error");
+      } catch (err) {
+        Swal.fire("Error", "Failed to delete", "error");
       }
     }
   };
 
-  if (isPending || !user) {
-    return (
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-base-200">
-        <div className="max-w-6xl mx-auto mt-10 px-4">
-           <div className="text-center text-gray-400 py-20">Loading your events...</div>
-        </div>
-      </div>
-    );
-  }
+  if (isPending || isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-base-200 pb-20">
@@ -92,17 +73,13 @@ export default function ManageEventsPage() {
             <h1 className="text-3xl font-bold text-white mb-2">Manage Your Events</h1>
             <p className="text-gray-400">View, edit, or delete the events you created.</p>
           </div>
-          <Link href="/create-event" className="btn btn-primary btn-sm">
-            + New Event
-          </Link>
+          <Link href="/create-event" className="btn btn-primary btn-sm">+ New Event</Link>
         </div>
 
         {events.length === 0 ? (
           <div className="text-center bg-base-100 p-10 rounded-xl border border-base-300">
             <p className="text-gray-400 text-lg mb-4">You have not created any events yet.</p>
-            <Link href="/create-event" className="btn btn-primary btn-outline">
-              Create your first event
-            </Link>
+            <Link href="/create-event" className="btn btn-primary btn-outline">Create your first event</Link>
           </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100">
@@ -122,9 +99,7 @@ export default function ManageEventsPage() {
                       <div className="font-bold text-white line-clamp-1">{event.title}</div>
                       <div className="text-sm text-gray-400 line-clamp-1 max-w-xs">{event.description}</div>
                     </td>
-                    <td>
-                      <div className="badge badge-secondary badge-sm">{event.eventType}</div>
-                    </td>
+                    <td><div className="badge badge-secondary badge-sm">{event.eventType}</div></td>
                     <td>
                       <div className="text-sm text-gray-300 flex flex-col gap-1">
                         <span className="flex items-center gap-1"><FiCalendar /> {new Date(event.eventDate).toLocaleDateString()}</span>
@@ -133,12 +108,8 @@ export default function ManageEventsPage() {
                     </td>
                     <td>
                       <div className="flex gap-2 justify-center">
-                        <Link href={`/manage-events/edit/${event._id}`} className="btn btn-xs btn-info text-white">
-                          <FiEdit /> Edit
-                        </Link>
-                        <button onClick={() => handleDelete(event._id)} className="btn btn-xs btn-error text-white">
-                          <FiTrash2 /> Delete
-                        </button>
+                        <Link href={`/manage-events/edit/${event._id}`} className="btn btn-xs btn-info text-white"><FiEdit /> Edit</Link>
+                        <button onClick={() => handleDelete(event._id)} className="btn btn-xs btn-error text-white"><FiTrash2 /> Delete</button>
                       </div>
                     </td>
                   </tr>

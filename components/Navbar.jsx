@@ -1,17 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { useSession, signOut } from "@/utils/auth-client"; // ✅ BetterAuth হুক
+import { useSession, signOut } from "@/utils/auth-client";
 import ThemeToggle from "./ThemeToggle";
 import { useRouter } from "next/navigation";
 import { FiMenu, FiX, FiLogOut, FiPlusCircle, FiBriefcase, FiUser, FiPhone, FiMail, FiSettings } from "react-icons/fi";
 
 export default function Navbar() {
-  const { data: session, isPending } = useSession(); // BetterAuth থেকে সেশন নিচ্ছি
+  const { data: session, isPending } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-
-  // সেশন চেক করা হচ্ছে
   const user = session?.user;
 
   const handleLogout = async () => {
@@ -28,10 +26,10 @@ export default function Navbar() {
   if (isPending) return <div className="h-20 bg-base-100"></div>;
 
   return (
-    <div className="w-full shadow-sm sticky top-0 z-50 bg-base-100/90 backdrop-blur-md text-base-content transition-colors duration-300 border-b border-base-300">
+    
+    <div className="w-full shadow-sm sticky top-0 z-50 bg-base-100 text-base-content border-b border-base-300">
       
-      {/* 🌟 Top Bar 🌟 */}
-      <div className="bg-primary text-primary-content text-xs py-2 px-4 hidden md:block transition-colors duration-300">
+      <div className="bg-primary text-primary-content text-xs py-2 px-4 hidden md:block">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex gap-6">
             <span className="flex items-center gap-2"><FiPhone /> +880 19xxxxx700</span>
@@ -41,17 +39,14 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 🌟 Main Navbar 🌟 */}
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-3xl font-serif font-bold text-base-content flex items-center gap-1">
               HopeHub<span className="text-secondary">.</span>
             </Link>
           </div>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="/" className="font-semibold text-base-content/80 hover:text-secondary transition">Home</Link>
             <Link href="/events" className="font-semibold text-base-content/80 hover:text-secondary transition">Upcoming Events</Link>
@@ -61,7 +56,6 @@ export default function Navbar() {
               <div className="dropdown dropdown-end">
                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar border-2 border-primary hover:border-secondary transition-colors">
                   <div className="w-10 rounded-full">
-                    {/* BetterAuth এ ইউজারের ছবি session.user.image তে থাকে */}
                     <img src={user.image || "https://i.ibb.co/5v9Z1g4/default-avatar.png"} alt="Profile" />
                   </div>
                 </div>
@@ -80,7 +74,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
             <ThemeToggle />
             <button onClick={() => setIsOpen(!isOpen)} className="text-base-content hover:text-secondary transition">
@@ -90,7 +83,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-base-100 border-t border-base-300 px-4 pt-2 pb-4 space-y-2 font-medium shadow-lg">
           <Link href="/" className="block py-2 text-base-content/80 hover:text-secondary">Home</Link>

@@ -18,30 +18,24 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // ✅ রিকোয়ারমেন্ট অনুযায়ী পাসওয়ার্ড ভ্যালিডেশন (৬ ডিজিট, ১ বড় ও ১ ছোট হাতের অক্ষর)
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     if (!passwordRegex.test(password)) {
-      Swal.fire({
-        icon: "error",
-        title: "Weak Password",
-        text: "Password must be at least 6 characters long, including 1 uppercase and 1 lowercase letter.",
-      });
+      Swal.fire({ icon: "error", title: "Weak Password", text: "Password must be at least 6 chars, 1 uppercase & 1 lowercase." });
       setIsLoading(false);
       return;
     }
 
-    // ✅ BetterAuth দিয়ে রেজিস্ট্রেশন
-    const { data, error } = await authClient.signUp.email({
+    const { error } = await authClient.signUp.email({
       email,
       password,
       name,
-      image: photoURL || "https://i.ibb.co/5v9Z1g4/default-avatar.png", // BetterAuth এ ছবির ফিল্ড 'image'
+      image: photoURL || "https://i.ibb.co/5v9Z1g4/default-avatar.png",
     });
 
     if (error) {
       Swal.fire({ icon: "error", title: "Registration Failed", text: error.message });
     } else {
-      Swal.fire({ icon: "success", title: "Registration Successful!", text: "Welcome to HopeHub!", timer: 1500, showConfirmButton: false });
+      Swal.fire({ icon: "success", title: "Registration Successful!", timer: 1500, showConfirmButton: false });
       router.push("/");
     }
     setIsLoading(false);
@@ -55,67 +49,35 @@ export default function RegisterPage() {
           <p className="text-center text-base-content/60 mb-6">Join the community</p>
 
           <form onSubmit={handleRegister} className="space-y-4">
-            
             <div className="form-control">
               <label className="label"><span className="label-text font-medium">Full Name</span></label>
               <div className="relative">
                 <FiUser className="absolute left-3 top-3.5 text-base-content/50" />
-                <input 
-                  type="text" 
-                  placeholder="e.g., Labib Ferdous" 
-                  className="input input-bordered w-full pl-10 bg-base-200" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  required 
-                />
+                <input type="text" placeholder="e.g., Labib Ferdous" className="input input-bordered w-full pl-10 bg-base-200" value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
             </div>
-
             <div className="form-control">
               <label className="label"><span className="label-text font-medium">Email</span></label>
               <div className="relative">
                 <FiMail className="absolute left-3 top-3.5 text-base-content/50" />
-                <input 
-                  type="email" 
-                  placeholder="e.g., labib@gmail.com" 
-                  className="input input-bordered w-full pl-10 bg-base-200" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  required 
-                />
+                <input type="email" placeholder="e.g., labib@gmail.com" className="input input-bordered w-full pl-10 bg-base-200" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
             </div>
-
             <div className="form-control">
               <label className="label"><span className="label-text font-medium">Password</span></label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-3.5 text-base-content/50" />
-                <input 
-                  type="password" 
-                  placeholder="e.g., Hopehub123" 
-                  className="input input-bordered w-full pl-10 bg-base-200" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
-                  required 
-                />
+                <input type="password" placeholder="e.g., Hopehub123" className="input input-bordered w-full pl-10 bg-base-200" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               <label className="label"><span className="label-text-alt text-base-content/50">Min 6 chars, 1 uppercase & 1 lowercase</span></label>
             </div>
-
             <div className="form-control">
               <label className="label"><span className="label-text font-medium">Photo URL (Optional)</span></label>
               <div className="relative">
                 <FiImage className="absolute left-3 top-3.5 text-base-content/50" />
-                <input 
-                  type="url" 
-                  placeholder="Paste your image link here (e.g., https://i.ibb.co/xyz)" 
-                  className="input input-bordered w-full pl-10 bg-base-200" 
-                  value={photoURL} 
-                  onChange={(e) => setPhotoURL(e.target.value)} 
-                />
+                <input type="url" placeholder="Paste your image link here" className="input input-bordered w-full pl-10 bg-base-200" value={photoURL} onChange={(e) => setPhotoURL(e.target.value)} />
               </div>
             </div>
-
             <button type="submit" className={`btn btn-primary w-full mt-4 ${isLoading ? "loading" : ""}`} disabled={isLoading}>
               {isLoading ? "Registering..." : "Register"}
             </button>

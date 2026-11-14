@@ -1,6 +1,5 @@
 import { Playfair_Display, Nunito } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar"; 
 import Footer from "@/components/Footer";
 
@@ -13,16 +12,14 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-    return (
+  return (
     <html lang="en" data-theme="light">
       <body className={`${playfair.variable} ${nunito.variable} font-sans antialiased`}>
-        <AuthProvider>
-          <Navbar /> {/* ✅ এখানে থাকতে হবে */}
-          <main className="min-h-[calc(100vh-4rem)]">
-            {children}
-          </main>
-          <Footer /> 
-        </AuthProvider>
+        <Navbar />
+        <main className="min-h-[calc(100vh-4rem)]">
+          {children}
+        </main>
+        <Footer /> 
       </body>
     </html>
   );

@@ -1,144 +1,99 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
-import { authClient } from "@/utils/auth-client";
-import { FiCalendar, FiMapPin, FiUser, FiArrowLeft } from "react-icons/fi";
+import Link from "next/link";
+import { FiCalendar, FiMapPin, FiSearch } from "react-icons/fi";
 
-function EventDetailsContent() {
-  const { id } = useParams();
-  const router = useRouter();
-  const { data: session } = authClient.useSession();
-  
-  const [event, setEvent] = useState(null);
+export default function EventsPage() {
+  const [events, setEvents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [isJoining, setIsJoining] = useState(false);
-
-  const user = session?.user;
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`);
-        setEvent(response.data);
-      } catch (error) {
-        Swal.fire("Error", "Event not found!", "error");
-        router.push("/events");
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) fetchEvent();
-  }, [id, router]);
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events`)
+      .then(res => setEvents(res.data))
+      .catch(err => console.log(err))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const handleJoinEvent = async () => {
-    if (!user) {
-      Swal.fire({
-        icon: "info",
-        title: "Login Required",
-        text: "You need to login first to join this event.",
-        showCancelButton: true,
-        confirmButtonText: "Login",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) router.push("/login");
-      });
-      return;
-    }
-
-    setIsJoining(true);
-    try {
-     
-      const { data: jwtData } = await authClient.token();
-
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}/join`,
-        {},
-        { headers: { Authorization: `Bearer ${jwtData.token}` } }
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: "Joined Successfully!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      
-      setEvent((prev) => ({
-        ...prev,
-        joinedUsers: [...(prev.joinedUsers || []), user.email],
-      }));
-    } catch (error) {
-      Swal.fire("Error", error.response?.data?.message || "Failed to join", "error");
-    } finally {
-      setIsJoining(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
-  }
-
-  const isAlreadyJoined = event.joinedUsers?.includes(user?.email);
+  const filteredEvents = events.filter(event => 
+    event.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    event.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
-      <div className="max-w-5xl mx-auto mt-10 px-4">
-        <button onClick={() => router.back()} className="btn btn-ghost btn-sm mb-4 text-base-content/70">
-          <FiArrowLeft /> Back
-        </button>
-
-        <div className="bg-base-100 rounded-3xl shadow-xl border border-base-300 overflow-hidden flex flex-col md:flex-row">
-          <figure className="md:w-1/2 h-64 md:h-auto">
-            <img
-              src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop"}
-              alt={event.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.src = "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop";
-              }}
-            />
-          </figure>
-          <div className="p-8 md:w-1/2 flex flex-col">
-            <div className="badge bg-secondary text-secondary-content mb-4 font-bold border-none">{event.eventType}</div>
-            <h1 className="text-3xl font-serif font-bold text-base-content mb-4">{event.title}</h1>
-            <p className="text-base-content/70 leading-relaxed mb-6 flex-grow">{event.description}</p>
-            
-            <div className="space-y-3 mb-8 bg-base-200 p-4 rounded-xl border border-base-300">
-              <p className="flex items-center gap-3 text-base-content/80"><FiMapPin className="text-primary" /> {event.location}</p>
-              <p className="flex items-center gap-3 text-base-content/80"><FiCalendar className="text-primary" /> {new Date(event.eventDate).toLocaleDateString()}</p>
-              <p className="flex items-center gap-3 text-base-content/80"><FiUser className="text-primary" /> Organized by: {event.userName}</p>
-            </div>
-
-            <div className="mt-auto">
-              <button
-                onClick={handleJoinEvent}
-                disabled={isJoining || isAlreadyJoined}
-                className={`btn w-full rounded-xl ${isAlreadyJoined ? "btn-success text-white" : "btn-primary text-primary-content"} ${isJoining ? "loading" : ""}`}
-              >
-                {isJoining ? "Joining..." : isAlreadyJoined ? "Already Joined" : "Join Event"}
-              </button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-base-200 font-sans py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Upcoming Events</h1>
+          <p className="text-base-content/70">Discover and join events to make a difference.</p>
         </div>
+
+        {/* Search Bar */}
+        <div className="max-w-md mx-auto mb-10 relative">
+          <FiSearch className="absolute left-4 top-4 text-base-content/50" size={20} />
+          <input 
+            type="text" 
+            placeholder="Search by title or location..." 
+            className="input input-bordered w-full pl-12 rounded-full bg-base-100 border-base-300 focus:border-primary" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+          />
+        </div>
+
+        {/* Events Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map(n => (
+              <div key={n} className="bg-base-100 rounded-2xl h-80 animate-pulse border border-base-300"></div>
+            ))}
+          </div>
+        ) : filteredEvents.length === 0 ? (
+          <div className="text-center text-base-content/60 text-xl py-20">No events found!</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredEvents.map((event) => (
+              <div key={event._id} className="bg-base-100 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-base-300 flex flex-col group">
+                
+                {/* Image & Badge */}
+                <figure className="h-48 overflow-hidden relative">
+                  <img 
+                    src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715"} 
+                    alt={event.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="badge bg-secondary text-secondary-content font-bold border-none">{event.eventType}</span>
+                  </div>
+                </figure>
+
+                {/* Card Body */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-serif font-bold mb-2 group-hover:text-secondary transition-colors line-clamp-1">
+                    {event.title}
+                  </h3>
+                  <p className="text-base-content/70 text-sm mb-4 line-clamp-2 flex-grow">
+                    {event.description}
+                  </p>
+                  
+                  {/* Info */}
+                  <div className="space-y-2 text-sm text-base-content/80 mb-6">
+                    <p className="flex items-center gap-2"><FiMapPin className="text-secondary" /> {event.location}</p>
+                    <p className="flex items-center gap-2"><FiCalendar className="text-secondary" /> {new Date(event.eventDate).toLocaleDateString()}</p>
+                  </div>
+
+                  {/* Button */}
+                  <Link href={`/events/${event._id}`} className="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content w-full rounded-xl transition-colors duration-300">
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  );
-}
-
-export default function EventDetailsPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    }>
-      <EventDetailsContent />
-    </Suspense>
   );
 }

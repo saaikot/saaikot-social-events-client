@@ -1,47 +1,55 @@
-# 🌟 HopeHub - Social Development Events Platform
+# HopeHub - Social Development Events Platform
 
-HopeHub is a community-driven, full-stack event management platform designed to connect passionate individuals with meaningful causes. Users can seamlessly create, discover, and join social service events in their local area. Whether it's a winter clothes distribution or a fundraising campaign, HopeHub makes organizing and participating in charity effortless.
+HopeHub is a community-driven full-stack web application. It allows users to create, discover, and join social events in their local area. It helps people connect with meaningful causes and participate in charity work.
 
 ## 🚀 Live Links
-- **Live Site URL:** [https://YOUR_CLIENT_URL.vercel.app](https://YOUR_CLIENT_URL.vercel.app)
-- **Client Repository:** [https://github.com/saaikot/saaikot-social-events-client](https://github.com/saaikot/saaikot-social-events-client)
-- **Server Repository:** [https://github.com/saaikot/saaikot-social-events-server](https://github.com/saaikot/saaikot-social-events-server)
+- **Live Site:** [YOUR_CLIENT_URL]
+- **Client Repo:** https://github.com/saaikot/saaikot-social-events-client
+- **Server Repo:** https://github.com/saaikot/saaikot-social-events-server
 
 ## ✨ Key Features
 
-- **Secure Authentication & Authorization:** Complete JWT-based email/password authentication alongside a seamless **Google Login** (via Firebase) integration. Protected routes ensure secure access to private data.
-- **Comprehensive Event Management (CRUD):** Logged-in users can create, update, and delete their own social events. Includes strict form validations, such as preventing the selection of past dates.
-- **Join & Track Events:** Users can explore upcoming events, view detailed information, and join them with a single click. Joined events are neatly tracked and sorted by date in a dedicated dashboard.
-- **Premium UI/UX & Custom Theming:** A fully responsive, eye-catching design featuring a custom **Light (Cream & Sage) / Dark (Pitch Black & Green)** theme toggle. Enhanced with smooth Framer Motion animations and a custom animated 404 error page.
-- **Advanced File Uploads:** Integrated **ImgBB API** allowing users to upload event thumbnails directly from their device instead of pasting URLs.
-- **Dynamic Profile Management:** Users can view and update their display name and profile picture, with global state synchronization across the app.
-- **Interactive Feedback & Loading States:** Replaced default browser alerts with elegant **SweetAlert2** popups for all success/error messages. Includes proper loading skeletons for a smooth user experience.
-- **Newsletter Subscription UI:** A beautifully designed newsletter section on the home page with interactive toast notifications.
+- **User Authentication:** Users can register and log in securely using Email/Password or Google Login. It is implemented using BetterAuth.
+- **Event Management (CRUD):** Logged-in users can create new events. They can also manage (update or delete) only the events they have created.
+- **Join Events:** Users can view all upcoming events and join them by clicking a button. The joined data is saved in the database.
+- **Private Routes:** Pages like Create Event, Manage Events, Joined Events, and Profile are protected. Unauthorized users are redirected to the login page.
+- **Joined Events Dashboard:** A dedicated page where users can see all the events they have joined, sorted by the event date.
+- **Profile Update:** Users can view their profile and update their display name and profile picture.
+- **Form Validation:** Added validation in all forms (e.g., checking password length, preventing past dates in event creation).
+- **Responsive UI:** The design is fully responsive with a custom Light and Dark mode toggle.
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
-- **Framework:** Next.js 14 (App Router)
-- **Styling:** Tailwind CSS, DaisyUI
-- **Animations:** Framer Motion
-- **Icons:** React Icons
-- **Authentication:** Firebase (Google Provider)
-- **API Requests:** Axios
+- Next.js (App Router)
+- Tailwind CSS & DaisyUI
+- BetterAuth
+- Axios
+- React Icons
 
 **Backend:**
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB (Native Driver)
-- **Authentication:** JSON Web Tokens (JWT), Bcrypt.js
+- Node.js & Express.js
+- MongoDB (Mongoose)
+- JOSE (for JWT verification)
 
 ## ⚙️ How to Run Locally
 
-Follow these steps to set up the project on your local machine:
+1. Clone the client and server repositories.
+```bash
+git clone https://github.com/saaikot/saaikot-social-events-client.git
+git clone https://github.com/saaikot/saaikot-social-events-server.git
 
-1. **Clone the repositories:**
-   ```bash
-   # Clone the client
-   git clone https://github.com/saaikot/saaikot-social-events-client.git
-   
-   # Clone the server
-   git clone https://github.com/saaikot/saaikot-social-events-server.git
+Setup Environment Variables
+# Client
+NEXT_PUBLIC_API_URL=your_server_url
+BETTER_AUTH_URL=your_client_url
+BETTER_AUTH_SECRET=your_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+MONGODB_URI=your_mongodb_uri
+
+# Server
+PORT=5000
+MONGODB_URI=your_mongodb_uri
+BETTER_AUTH_SECRET=your_secret
+CLIENT_URL=your_client_url

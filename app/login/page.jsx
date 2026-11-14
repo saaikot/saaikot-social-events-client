@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/utils/auth-client"; // ✅ BetterAuth ক্লায়েন্ট
+import { authClient } from "@/utils/auth-client";
 import { FiMail, FiLock } from "react-icons/fi";
 
 export default function LoginPage() {
@@ -12,15 +12,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // ✅ ১. ইমেইল/পাসওয়ার্ড লগইন (BetterAuth)
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { data, error } = await authClient.signIn.email({
-      email,
-      password,
-    });
+    const { error } = await authClient.signIn.email({ email, password });
 
     if (error) {
       Swal.fire({ icon: "error", title: "Login Failed", text: error.message });
@@ -31,12 +27,8 @@ export default function LoginPage() {
     setIsLoading(false);
   };
 
-  // ✅ ২. গুগল লগইন (BetterAuth)
   const handleGoogleLogin = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/", // লগইন সফল হলে হোম পেজে যাবে
-    });
+    await authClient.signIn.social({ provider: "google", callbackURL: "/" });
   };
 
   return (
@@ -54,7 +46,6 @@ export default function LoginPage() {
                 <input type="email" placeholder="you@example.com" className="input input-bordered w-full pl-10 bg-base-200" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
             </div>
-
             <div className="form-control">
               <label className="label"><span className="label-text font-medium">Password</span></label>
               <div className="relative">
@@ -62,7 +53,6 @@ export default function LoginPage() {
                 <input type="password" placeholder="••••••••" className="input input-bordered w-full pl-10 bg-base-200" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
             </div>
-
             <button type="submit" className={`btn btn-primary w-full ${isLoading ? "loading" : ""}`} disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
             </button>
