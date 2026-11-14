@@ -1,116 +1,144 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import Link from "next/link";
-import { FiCalendar, FiMapPin, FiSearch } from "react-icons/fi";
-import { motion } from "framer-motion";
+import Swal from "sweetalert2";
+import { authClient } from "@/utils/auth-client";
+import { FiCalendar, FiMapPin, FiUser, FiArrowLeft } from "react-icons/fi";
 
-export default function AllEventsPage() {
-  const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+function EventDetailsContent() {
+  const { id } = useParams();
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  
+  const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [isJoining, setIsJoining] = useState(false);
+
+  const user = session?.user;
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchEvent = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
-        setEvents(response.data);
-        setFilteredEvents(response.data);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`);
+        setEvent(response.data);
       } catch (error) {
-        console.error("Error fetching events", error);
+        Swal.fire("Error", "Event not found!", "error");
+        router.push("/events");
       } finally {
         setLoading(false);
       }
     };
-    fetchEvents();
-  }, []);
+    if (id) fetchEvent();
+  }, [id, router]);
 
-  useEffect(() => {
-    const results = events.filter(
-      (event) =>
-        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.location.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleJoinEvent = async () => {
+    if (!user) {
+      Swal.fire({
+        icon: "info",
+        title: "Login Required",
+        text: "You need to login first to join this event.",
+        showCancelButton: true,
+        confirmButtonText: "Login",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) router.push("/login");
+      });
+      return;
+    }
+
+    setIsJoining(true);
+    try {
+     
+      const { data: jwtData } = await authClient.token();
+
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}/join`,
+        {},
+        { headers: { Authorization: `Bearer ${jwtData.token}` } }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Joined Successfully!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      
+      setEvent((prev) => ({
+        ...prev,
+        joinedUsers: [...(prev.joinedUsers || []), user.email],
+      }));
+    } catch (error) {
+      Swal.fire("Error", error.response?.data?.message || "Failed to join", "error");
+    } finally {
+      setIsJoining(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
     );
-    setFilteredEvents(results);
-  }, [searchTerm, events]);
+  }
+
+  const isAlreadyJoined = event.joinedUsers?.includes(user?.email);
 
   return (
-    
-    <div className="min-h-screen bg-base-200 font-sans transition-colors duration-300">
-      
-      
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Upcoming Events</h1>
-          <p className="text-base-content/70">Discover and join events to make a difference.</p>
-        </div>
+    <div className="min-h-screen bg-base-200 pb-20 font-sans transition-colors duration-300">
+      <div className="max-w-5xl mx-auto mt-10 px-4">
+        <button onClick={() => router.back()} className="btn btn-ghost btn-sm mb-4 text-base-content/70">
+          <FiArrowLeft /> Back
+        </button>
 
-        <div className="max-w-md mx-auto mb-10 relative">
-          <FiSearch className="absolute left-4 top-4 text-base-content/50" size={20} />
-          <input
-            type="text"
-            placeholder="Search by title or location..."
-            className="input input-bordered w-full pl-12 rounded-full bg-base-100 border-base-300 text-base-content focus:border-primary"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+        <div className="bg-base-100 rounded-3xl shadow-xl border border-base-300 overflow-hidden flex flex-col md:flex-row">
+          <figure className="md:w-1/2 h-64 md:h-auto">
+            <img
+              src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop"}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop";
+              }}
+            />
+          </figure>
+          <div className="p-8 md:w-1/2 flex flex-col">
+            <div className="badge bg-secondary text-secondary-content mb-4 font-bold border-none">{event.eventType}</div>
+            <h1 className="text-3xl font-serif font-bold text-base-content mb-4">{event.title}</h1>
+            <p className="text-base-content/70 leading-relaxed mb-6 flex-grow">{event.description}</p>
+            
+            <div className="space-y-3 mb-8 bg-base-200 p-4 rounded-xl border border-base-300">
+              <p className="flex items-center gap-3 text-base-content/80"><FiMapPin className="text-primary" /> {event.location}</p>
+              <p className="flex items-center gap-3 text-base-content/80"><FiCalendar className="text-primary" /> {new Date(event.eventDate).toLocaleDateString()}</p>
+              <p className="flex items-center gap-3 text-base-content/80"><FiUser className="text-primary" /> Organized by: {event.userName}</p>
+            </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="bg-base-100 rounded-2xl h-80 animate-pulse border border-base-300"></div>
-            ))}
-          </div>
-        ) : filteredEvents.length === 0 ? (
-          <div className="text-center text-base-content/60 text-xl py-20">No events found!</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredEvents.map((event, index) => (
-              <motion.div
-                key={event._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="bg-base-100 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-base-300 flex flex-col"
+            <div className="mt-auto">
+              <button
+                onClick={handleJoinEvent}
+                disabled={isJoining || isAlreadyJoined}
+                className={`btn w-full rounded-xl ${isAlreadyJoined ? "btn-success text-white" : "btn-primary text-primary-content"} ${isJoining ? "loading" : ""}`}
               >
-                <figure className="h-48 overflow-hidden relative">
-                  <img
-                    src={event.imageUrl || "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop"}
-                    alt={event.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    onError={(e) => {
-                      e.target.src = "https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=600&auto=format&fit=crop";
-                    }}
-                  />
-                  <div className="absolute top-4 right-4">
-                    <span className="badge bg-secondary text-secondary-content font-bold border-none">
-                      {event.eventType}
-                    </span>
-                  </div>
-                </figure>
-                
-                <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-serif font-bold text-base-content mb-2 line-clamp-1 group-hover:text-secondary transition-colors">
-                    {event.title}
-                  </h3>
-                  <p className="text-base-content/70 text-sm mb-4 line-clamp-2">{event.description}</p>
-                  
-                  <div className="mt-auto space-y-2 text-sm text-base-content/80 mb-6">
-                    <p className="flex items-center gap-2"><FiMapPin className="text-secondary" /> {event.location}</p>
-                    <p className="flex items-center gap-2"><FiCalendar className="text-secondary" /> {new Date(event.eventDate).toLocaleDateString()}</p>
-                  </div>
-
-                  <Link href={`/events/${event._id}`} className="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content w-full rounded-xl transition-colors duration-300">
-                    View Details
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+                {isJoining ? "Joining..." : isAlreadyJoined ? "Already Joined" : "Join Event"}
+              </button>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function EventDetailsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    }>
+      <EventDetailsContent />
+    </Suspense>
   );
 }

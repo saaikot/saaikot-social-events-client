@@ -1,28 +1,33 @@
 "use client";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Swal from "sweetalert2";
-import { AuthContext } from "@/context/AuthContext";
+import { authClient } from "@/utils/auth-client";
 import { useRouter } from "next/navigation";
 import { FiEdit, FiTrash2, FiCalendar, FiMapPin } from "react-icons/fi";
 
 export default function ManageEventsPage() {
-  const { user, token, loading } = useContext(AuthContext);
+  const { data: session, isPending } = authClient.useSession();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const user = session?.user;
+
   useEffect(() => {
-    if (!loading && !user) {
+    if (!isPending && !user) {
       router.replace("/login");
     }
-  }, [user, loading, router]);
+  }, [user, isPending, router]);
 
   const fetchMyEvents = async () => {
     try {
+      const { data: jwtData } = await authClient.token();
+      if (!jwtData?.token) return;
+
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/my-events`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${jwtData.token}` },
       });
       setEvents(response.data);
     } catch (error) {
@@ -33,8 +38,8 @@ export default function ManageEventsPage() {
   };
 
   useEffect(() => {
-    if (token) fetchMyEvents();
-  }, [token]);
+    if (user) fetchMyEvents();
+  }, [user]);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -49,8 +54,9 @@ export default function ManageEventsPage() {
 
     if (result.isConfirmed) {
       try {
+        const { data: jwtData } = await authClient.token();
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${jwtData.token}` },
         });
         setEvents((prevEvents) => prevEvents.filter((event) => event._id !== id));
         Swal.fire("Deleted!", "Your event has been deleted.", "success");
@@ -60,7 +66,7 @@ export default function ManageEventsPage() {
     }
   };
 
-  if (loading || !user) {
+  if (isPending || !user) {
     return (
       <div className="min-h-screen bg-base-200 flex items-center justify-center">
         <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -71,7 +77,6 @@ export default function ManageEventsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-base-200">
-      
         <div className="max-w-6xl mx-auto mt-10 px-4">
            <div className="text-center text-gray-400 py-20">Loading your events...</div>
         </div>
@@ -81,7 +86,6 @@ export default function ManageEventsPage() {
 
   return (
     <div className="min-h-screen bg-base-200 pb-20">
-      
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="mb-8 border-b pb-4 border-base-300 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>

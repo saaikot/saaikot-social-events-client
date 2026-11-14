@@ -1,32 +1,38 @@
 "use client";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; 
-import { AuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/utils/auth-client";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 
 export default function JoinedEventsPage() {
-  const { user, token, loading } = useContext(AuthContext);
-  const router = useRouter(); 
+  const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
- 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login"); 
-    }
-  }, [user, loading, router]);
+  const user = session?.user;
 
- 
+  useEffect(() => {
+    if (!isPending && !user) {
+      router.replace("/login");
+    }
+  }, [user, isPending, router]);
+
   useEffect(() => {
     const fetchJoinedEvents = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
+        
+        // ✅ শুধু সেই ইভেন্টগুলো ফিল্টার করা যেখানে ইউজারের ইমেইল joinedUsers-এ আছে
         const joined = response.data.filter(
           (event) => event.joinedUsers && event.joinedUsers.includes(user.email)
         );
+        
+        // ✅ ডেট অনুযায়ী সর্ট করা
+        joined.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
+        
         setEvents(joined);
       } catch (error) {
         console.error("Error fetching joined events", error);
@@ -35,20 +41,11 @@ export default function JoinedEventsPage() {
       }
     };
     
-    
-    if (user && token) {
-      fetchJoinedEvents();
-    } else if (!loading && !user) {
-      setIsLoading(false); 
-    }
-  }, [user, token, loading]);
+    if (user) fetchJoinedEvents();
+  }, [user]);
 
-  if (loading || isLoading) {
-    return (
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
+  if (isPending || isLoading) {
+    return <div className="min-h-screen bg-base-200 flex items-center justify-center"><span className="loading loading-spinner loading-lg text-primary"></span></div>;
   }
 
   return (
@@ -56,7 +53,7 @@ export default function JoinedEventsPage() {
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="mb-8 border-b pb-4 border-base-300">
           <h1 className="text-3xl font-bold text-white mb-2">Joined Events</h1>
-          <p className="text-gray-400">Events you are participating in.</p>
+          <p className="text-gray-400">Events you are participating in, sorted by date.</p>
         </div>
 
         {events.length === 0 ? (
@@ -86,8 +83,6 @@ export default function JoinedEventsPage() {
             ))}
           </div>
         )}
-
-        
       </div>
     </div>
   );
