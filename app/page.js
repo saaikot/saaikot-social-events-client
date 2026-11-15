@@ -133,10 +133,11 @@ export default function Home() {
           <p className="text-base-content/70">Glimpses of our past social service events.</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <img src="https://images.unsplash.com/photo-1593113589910-740dea31b715?q=80&w=500&auto=format&fit=crop" alt="Gallery 1" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
-          <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=500&auto=format&fit=crop" alt="Gallery 2" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
-          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=500&auto=format&fit=crop" alt="Gallery 3" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
-          <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=500&auto=format&fit=crop" alt="Gallery 4" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
+          {/*gallery images from my public folder*/}
+          <img src="/gallery-1.jpg" alt="Gallery 1" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
+          <img src="/gallery-2.jpg" alt="Gallery 2" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
+          <img src="/gallery-3.jpg" alt="Gallery 3" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
+          <img src="/gallery-4.jpg" alt="Gallery 4" className="w-full h-40 md:h-56 object-cover rounded-xl shadow-md" />
         </div>
       </section>
 
