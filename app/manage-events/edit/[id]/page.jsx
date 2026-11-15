@@ -1,26 +1,34 @@
 "use client";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { authClient } from "@/utils/auth-client";
 import { FiImage, FiMapPin, FiCalendar, FiType, FiFileText } from "react-icons/fi";
 
-export default function EditEventPage() {
+// Inner component where we use useParams
+function EditEventContent() {
   const { id } = useParams();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const [formData, setFormData] = useState({ title: "", description: "", eventType: "Donation", imageUrl: "", location: "", eventDate: "" });
+  const [formData, setFormData] = useState({
+    title: "", description: "", eventType: "Donation", imageUrl: "", location: "", eventDate: ""
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = session?.user;
 
   useEffect(() => {
     if (!isPending && !user) router.replace("/login");
+    
+    // Fetch existing event data
     if (id) {
       axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`)
         .then(res => {
           const { title, description, eventType, imageUrl, location, eventDate } = res.data;
-          setFormData({ title, description, eventType, imageUrl, location, eventDate: new Date(eventDate).toISOString().split("T")[0] });
+          setFormData({ 
+            title, description, eventType, imageUrl, location, 
+            eventDate: new Date(eventDate).toISOString().split("T")[0] 
+          });
         })
         .catch(() => router.push("/manage-events"));
     }
@@ -87,11 +95,21 @@ export default function EditEventPage() {
                   <input type="url" name="imageUrl" className="input input-bordered w-full" value={formData.imageUrl} onChange={handleChange} />
                 </div>
               </div>
-              <button type="submit" className={`btn btn-primary w-full ${isSubmitting ? "loading" : ""}`} disabled={isSubmitting}>Update Event</button>
+              <button type="submit" className={`btn btn-primary w-full ${isSubmitting ? "loading" : ""}`} disabled={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Event"}
+              </button>
             </form>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function EditEventPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-primary">Loading...</div>}>
+      <EditEventContent />
+    </Suspense>
   );
 }
